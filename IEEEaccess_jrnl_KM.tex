@@ -1,8 +1,5 @@
 \documentclass{ieeeaccess}
-%
-% If IEEEtran.cls has not been installed into the LaTeX system files,
-% manually specify the path to it like:
-% \documentclass[journal]{../sty/IEEEtran}
+
 \usepackage[dvipdfmx]{graphicx}
 \usepackage{mathrsfs}
 \usepackage{mathtools}
@@ -35,54 +32,36 @@
 \begin{document}
 \history{Date of publication xxxx 00, 0000, date of current version xxxx 00, 0000.}
 \doi{10.1109/ACCESS.2017.DOI}
-\title{Utility Based Scheduling for Multi-UAV Search System in Disaster Areas}
-%
-%
-% author names and IEEE memberships
-% note positions of commas and nonbreaking spaces ( ~ ) LaTeX will not break
-% a structure at a ~ so this keeps an author's name from being broken across
-% two lines.
-% use \thanks{} to gain access to the first footnote area
-% a separate \thanks must be used for each paragraph as LaTeX2e's \thanks
-% was not built to handle multiple paragraphs
-%
+\title{Utility Based Scheduling for Multi-UAV Search Systems in Disaster-hit Areas}
 
-%\author{Michael~Shell,~\IEEEmembership{Member,~IEEE,}
-%        John~Doe,~\IEEEmembership{Fellow,~OSA,}
-%        and~Jane~Doe,~\IEEEmembership{Life~Fellow,~IEEE}% <-this % stops a space
-\author{\uppercase{Kosei MIYANO,Ryoichi SHINKUMA,Eiji OKI, and Takehiro SATO}}
-\address{Graduate School of Informatics, Kyoto University Yoshidahon-machi, Sakyo-ku, Kyoto 606-8501 Japan}
+\author{\uppercase{Kosei MIYANO\authorrefmark{1}, Ryoichi SHINKUMA\authorrefmark{1}, NARAYAN B. MANDAYAM\authorrefmark{2}, Takehiro SATO\authorrefmark{1}, and Eiji OKI\authorrefmark{1}}}
+\address[1]{Graduate School of Informatics, Kyoto University Yoshida-honmachi, Sakyo-ku, Kyoto 606-8501, Japan}
+\address[2]{Wireless Information Network Laboratory (WINLAB), Rutgers University, 671 Route 1 South, North Brunswick, NJ, 08902-3390, USA}
 \tfootnote{This work was partly supported by JSPS KAKENHI Grant Number JP17H01732.}
-%A part of the content in this paper was published in the proceedings of IEEE GCCE 2018.
 
 \markboth
-{K. Miyano \headeretal: Utility Based Scheduling for Multi-UAV Search System in Disaster Areas}
-{K. Miyano \headeretal: Utility Based Scheduling for Multi-UAV Search System in Disaster Areas}
+{K. Miyano \headeretal: Utility Based Scheduling for Multi-UAV Search Systems in Disaster-hit Areas}
+{K. Miyano \headeretal: Utility Based Scheduling for Multi-UAV Search Systems in Disaster-hit Areas}
 
 \corresp{Corresponding author: K. Miyano (e-mail: kmiyano@icn.cce.i.kyoto-u.ac.jp).}
 
 \begin{IEEEkeywords}
-uav (unmanned aerial vehicle), target search, scheduling, edge computing
+unmanned aerial vehicle, target search, scheduling, edge computing
 \end{IEEEkeywords}
 
 \begin{abstract}
-%The number of deaths and missing people due to natural disasters is still a big social issue these days in many countries.
-%It is a still big social issue these days to find people who have disappeared because of getting lost in unexpected situation like disaster.
-%To search such lost people in disaster-damaged areas, the integrated system of the mobility of multiple unmanned aerial vehicles (UAVs) has been studied as a promising solution for that.
 Micro or small unmanned aerial vehicles (UAVs) is a promising solution for finding people who have disappeared because of getting lost in unexpected situation like disaster.
 It takes long time to analyze the acquired image data for the target recognition due to the limited computational resource of small UAVs.
 In addition, the data transfer time can increase in the disaster-hit areas due to the  damage of communication infrastructures.
-However, the prior researches did not consider both processing time of the acquired data and data transfer time, despite the temporal requirement in the surveillance scenarios.
+However, the prior researches did not consider both processing time of the acquired data and data transfer time, though, from a user-centric viewpoint, the temporal requirement in such surveillance scenarios is strict.
+
 Therefore, this paper proposes a scheduling method of multi-UAV search system that considers processing time of image data and data transfer time.
 We present the utility-based problem formulation that ensures the freshness of individual obtained piece of information while obtaining as many pieces of information as possible for a certain period.
-Simulation results verify that the proposed scheduling method ensures the freshness of individual obtained piece of information while delivering as many pieces of information as possible for a certain period by evaluating each information in terms of two metrics: i) elapsed time from start time and ii) elapsed time after acquired.
+Simulation results verify that the proposed scheduling method maximizes the user's utility and works better than the benchmarks in terms of user-centric evaluation metrics.
 \end{abstract}
 
 \maketitle
 \IEEEpeerreviewmaketitle
-
-
-%\vspace*{-3mm}
 
 \section{introduction}\label{intro}
 The number of deaths and missing people due to natural disasters is still a serious problem in many countries.
@@ -93,43 +72,38 @@ The report by Japan Ministry of Defense after the great east Japan earthquake su
 However, a huge budget is required to secure manpower and the risk of secondary damages in disaster occurrence areas is serious remaining issues to be solved\cite{disaster2011}.
 %
 Micro or small unmanned aerial vehicles (UAVs), also known as drones, are expected to be emerging solutions to solve the above problem in areas where humans and ground vehicles cannot easily step into like disaster-damaged areas.
-Technological advances in the recent years have led to the emergence of smaller and cheaper UAVs, which have some functions such as transporting relief supplies, collecting data by using equipped sensors and operating as adhoc wireless mesh network infrastructure in such isolated areas \cite{Andre2014,Erdelj2016,Felice2014}.
-Collecting image data is especially important because it is applicable to many use cases such as search and rescue mission, fire detection and surveillance.
+Technological advances in the recent years have led to the emergence of smaller and cheaper UAVs, which can provide some functions such as transporting relief supplies, collecting data by using onboard sensors, and forming adhoc wireless mesh network infrastructure in such isolated areas \cite{Andre2014,Erdelj2016,Felice2014}.
+Collecting image data is especially important because it is applicable to many use cases such as search, and rescue mission, fire detection and surveillance.
 %
 Since there are time constraints in such situations, UAVs need to collect sensor data as soon as possible.
 In the great east Japan earthquake, as time passed, the number of deaths and missing people  dramatically increased\cite{japan2011}.
 Surveillance using multiple UAVs has been receiving increasing attention for reasons such as increase in system reliability, robustness, and efficiency\cite{Lanillos2014,Maza2007,Meng2014,chang2016,Mirzaei2011}.
-From a service-centric viewpoint, in such surveillance scenarios, temporal requirement must be quite strict.
 
-However, despite the temporal requirement, it is assumed that the user can obtain necessary information as soon as UAV acquires image data: both processing time of image data and data transfer time are not taken into consideration. In the practical situation, it takes long time to analyze images for target recognition due to the limited computational resource of small UAVs. In addition, the data transfer time can increase in the disaster-hit areas due to the damage of communication infrastructures.
+However, although from a user-centric viewpoint, the time requirement in such surveillance scenarios should be strict, the prior works assumed that the user can obtain necessary information as soon as UAV acquires image data: both processing time of image data and data transfer time are not taken into consideration. In the practical situation, it takes long time to analyze images for target recognition due to the limited computational resource of small UAVs. In addition, the data transfer time can increase in the disaster-hit areas due to the damage of communication infrastructures.
 
 Therefore, this paper proposes a scheduling method of multi-UAV search system that considers processing time of image data and data transfer time.
 We present the utility-based problem formulation that ensures the freshness of individual obtained piece of information while obtaining as many pieces of information as possible for a certain period.
-%The results of QoS evaluation are presented to verify that our proposed scheduling method meets the four requirements for service-centric multi-UAV search systems.まず、提案方式が utility を最大化できていることを示す
 We show that the proposed scheduling method maximizes the user's utility, which is calculated from the efficiency of obtaining results from analyzed data and the interval of obtaining the results, through the basic performance evaluation.
-%次に、From a service-centric viewpoint で3つの評価指標を用いて評価を行ない、Benchmarkに対する有効性を示す
-We also conduct the simulation using the three evaluation metric from a service-centric viewpoint to verify the effectiveness of the the proposed scheduling method against the benchmarks.
+We also conduct the simulation using the three evaluation metric from a user-centric viewpoint to verify the effectiveness of the the proposed scheduling method against the benchmarks.
 
-The remainder of this paper is organized as follows. Section II discusses the related work. Section III presents the system overview and proposed scheduling method. Section IV then provides the basic performance evaluation in terms of the user's utility, followed by the simulation using the three evaluation metric from a service-centric viewpoint in Section V. Finally, Section VI concludes this paper.
-%
-%
+The remainder of this paper is organized as follows. Section II discusses the related work. Section III presents the system overview and proposed scheduling method. Section IV then provides the basic performance evaluation in terms of the user's utility, followed by the simulation using the three evaluation metric from a user-centric viewpoint in Section V. Finally, Section VI concludes this paper. Note this paper is an extended version of the one the authors presented at IEEE GCCE 2018 \cite{GCCE2018}.
+
 \section{Related work}
-This section discusses the prior works related to this paper.
-First we will discuss UAV Applications in disaster areas. 
-Among the application scenarios that will be introduced in Section \ref{app}, data collection using equipped sensors is carried out in our system.
-Next the prior researches on Multi-UAV cooperation for area coverage is discussed since it is also assumed in our search system as mentioned in Section \ref{intro}.
-Finally, we also discuss prior works on inter UAV cooperation for computing and  computing on UAVs with edge computing.
-In our system, it is assumed that the collected data is processed locally onboard UAVs with edge computing but inter UAV cooperation for computing is not considered since the overhead of transmission between UAVs is large and is out of the scope of this paper.
+This section will discusse the prior works related to this paper.
+As described in Section \ref{app}, UAVs work for data collection using onboard sensors in disaster areas as we assume in this paper.
+In Section \ref{cover}, multi-UAV cooperation for area coverage will be discussed; UAVs in our system also work cooperatively to cover a sensing region.
+%
+Section \ref{compute} will discuss the computing issue of UAVs, which is an important factor in our work though our work assume only cooperative computing with edge server; inter-UAV cooperation for computing is out of scope from this paper.
 
 \subsection{UAV Applications in disaster areas}\label{app}
 Transporting relief supplies by UAVs is very important since there is a possibility that humans and ground vehicles cannot easily step into the disaster areas.
 Bamburry mentioned the ability of a UAV to deliver medical products to remote and hard-to-reach areas\cite{Bamburry2015}.
 For example, in the devastating 2010 earthquake in Haiti, a UAV delivery system was used to deliver medicine to camps set up after the disaster\cite{May2015}.
 
-UAVs can also collect data by using equipped sensors. In \cite{Wada2015}, Each UAV is provided with a mobile optical sensors and image transmission modules developed by the Wada et al. The optical sensor which is a combination of a IR sensor and a visible-light sensor enables data collection even at night or against smoke in the disaster areas.
+UAVs can also collect data by using onboard sensors. In \cite{Wada2015}, Each UAV is provided with a mobile optical sensors and image transmission modules developed by the Wada et al. The optical sensor which is a combination of a IR sensor and a visible-light sensor enables data collection even at night or against smoke in the disaster areas.
 After the launch, a UAV executes auto flight along the way points by recognizing its positions and  obtains the necessary video/image information. The UAV transmits it to the server and shares it with users via the Internet.
 
-UAVs also often operate as adhoc wireless mesh network infrastructure, which is called Flying Ad Hoc Networks (FANET)\cite{Bekmezci2013}.
+UAVs also often work for forming adhoc wireless mesh network infrastructure, which is called Flying Ad Hoc Networks (FANET)\cite{Bekmezci2013}.
 In 2016, S\'anchez et al. aim to provide connectivity for rescuers and disaster victims using UAVs\cite{Garcia2016}.
 They propose a Jaccard-based movement rules to define the UAVs best positions for providing the best communication service to the victims in a urban disaster scenario.
 Finally they compare among several local search computational intelligence algorithms implemented such as simulated annealing, hill climbing, and random walk for deciding the best tactical UAV movements.
@@ -154,8 +128,8 @@ Finally they compare among three strategies that perform search by UAVs in a sim
 \subsection{Multi-UAV cooperation for computing}\label{compute}
 UAV Applications in disaster areas require UAVs to deal with intensive computation tasks such as image/video processing, pattern recognition and feature extraction. 
 Computation offloading is very important since computational power of a single UAV is limited.
-\subsubsection{inter UAV cooperation}
-Ouahouah et al. in 2017 proposed the use of offloading mechanism among UAVs equipped with IoT devices\cite{Ouahouah2017}.
+\subsubsection{Inter-UAV cooperation}
+Ouahouah et al. in 2017 proposed the use of offloading mechanism among UAVs equipped with internet-of-thing (IoT) devices\cite{Ouahouah2017}.
 Each IoT task is partitioned into a set of sub-tasks that can be executed simultaneously among a cluster of UAVs.
 The sub-tasks is assigned to UAVs based on their power supply, resources in terms of memory and CPU computation, and their on-board IoT devices.
 Two solutions were proposed for computation offloading:Energy aware optimal task offloading and Delay aware optimal task offloading.
@@ -177,9 +151,6 @@ Messous et al. in 2017 tackled a computation offloading problem with three diffe
 They proved the existence of a Nash Equilibrium and design an offloading algorithm that converges to the optimal point.
 Their cost function was defined as a combination of two performance metrics: energy and delay.
 They finally achieved better value of the utility using the the offloading algorithm, compared to computing on: edge server, base station and drone respectively.
-%
-%
-
 
 \section{Proposed method}\label{method}
 
@@ -189,7 +160,6 @@ They finally achieved better value of the utility using the the offloading algor
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width=8.0cm]{fig/system_illustration.pdf}
-%\vspace{-2.5mm}
 \caption{System illustration}
 \label{model}
 \end{center}
@@ -210,19 +180,16 @@ Each UAV is operated by the UD and performs the following actions autonomously i
 (i\hspace{-.1em}v) Reporting results obtained from the analysis of image data to the UD soon after it has been completed.
 %
 Note that we assume that UAVs cannot perform any analysis while flying; computational resources of UAVs are fully used for flight control and image acquiring during the flight. Each UAV repeats all the actions (i) to (i\hspace{-.1em}v). We call one action (i) to (i\hspace{-.1em}v) of some UAV one round.
-%UAV $i$は$N^i$枚の画像処理が終了すると即座に次の飛行を開始する．
+%
 The ES is placed closely to the UD and works to perform the analysis of a part of image data received from UAVs.
 %
 Like UAVs do, soon after the ES has completed the analysis, it reports the results to the UD.
-%
-%Edge computing has been proposed as an effective mean of supplementing computational resources for UAVs because, in general, computational power of small or micro UAVs is limited \cite{Mohamed2017,Motlagh2017}.
 
 \subsubsection{System flow}\label{flow}
 In the system we assume in this paper, the schedules of flying, acquiring, and analyzing of UAVs are determined through the following steps:
 %
 \begin{description}
 \item[(1)] Check if there is one or more UAVs the schedules of which have not been determined yet. If yes, go to step (2). Otherwise repeat step(1).
-%\item[(2)] If step (1) is yes, one of the unscheduled UAVs is picked and labeled as UAV $i$ $i (i=1, 2, 3\cdots)$.
 \item[(2)] Pick one of the unscheduled UAVs and label it as UAV $i (i=1, 2, 3\cdots)$, if step (1) is yes.
 \item[(3)] Refer to the information about the schedules of UAVs $i-1$, $i-2$, $i-3$, $\cdots$, which were scheduled before UAV $i$.
 \item[(4)] Determine the schedule of UAV $i$ by a scheduling method, which will be described later.
@@ -238,7 +205,7 @@ The calculating time depends on the complexity of the scheduling method.
 %
 Therefore, the complexity of the scheduling method should not be complicated.
 %
-However, from the second round of the scheduling for a UAV, the calculation can be done in advance while the UAV is performing step (5b) because all the previous schedules before the UAV have been determined already and the information of all the previous schedules are available.
+However, during the second or later round of the scheduling for a UAV, the calculation can be done in advance while the UAV is performing step (5b) because all the previous schedules before the UAV have been determined already and the information of all the previous schedules are available.
 %
 %
 When the ES receives a computational task from a UAV via the UD, the ES puts it to the waiting queue.
@@ -246,13 +213,13 @@ When the ES receives a computational task from a UAV via the UD, the ES puts it 
 The ES processes those computational tasks in the first-in first-out (FIFO) manner and reports the result to the UD immediately after finishing each computational task.
 
 \subsection{Proposed scheduling method}\label{math}
-We assume the system model shown in Figure \ref{model1.5}, in which sensing sections are placed on the one-dimensional line and their sizes are identical.
+For simplifying our theoretical discussion, we first assume the system model shown in Figure \ref{model1.5}, in which sensing sections are placed on the one-dimensional line and their sizes are identical.
 %
 Sensing sections are assigned to UAVs from the one closest to the initial position and only an image is acquired at each sensing section.
 %
 These assumptions allow us to simply deal with the sensing range of each UAV as the number of images acquired by them.
 %
-We also assume that, if the computing resource of ES or the communication channel of UD is still used by previously scheduled UAVs (UAVs $1, 2, \cdots i-1$), UAV $i$ has to wait in the first-in first-out (FIFO) manner until their operations are completed.
+We also assume that, if the computing resource of ES or the communication channel of UD is still used by previously scheduled UAVs (UAVs $1, 2, \cdots i-1$), UAV $i$ has to wait in the FIFO manner until their operations are completed.
 %
 This also means that the operation of UAV $i$ does not affect the operations of the previous UAVs (UAVs $1, 2, \cdots i-1$).
 
@@ -291,7 +258,6 @@ The reason why it is reasonable is because, in surveillance scenarios, users wou
 
 \begin{table}[t]
 \centering
-%{\renewcommand\arraystretch{1}
 \caption{Definition of notation}
   \begin{tabular}{|c|l|} \hline
  & Description
@@ -299,13 +265,11 @@ The reason why it is reasonable is because, in surveillance scenarios, users wou
  $N^i$ & No. of images acquired by UAV $i$ \\ \hline
  $N_u^i$ & No. of images processed by UAV $i$ in $N^i$ \\ \hline
  $N_e^i$ & No. of images delegated from UAV $i$ to ES   \\ \hline
- %$frac{d}{v^i}$ & Flying time per sensing section  \\ \hline
  \shortstack[l]{$D$\\ ~}& \shortstack[l]{Distance between initial position and \\left-end of sensing block} \\ \hline
  $d$ & Size of each sensing section     \\ \hline
   $v^{i}$ & Flying speed of UAV $i$    \\ \hline
  $T_g$ & Image acquisition time per sensing section \\ \hline
- %$T_f$ & Flying time from initial position to left-end of sensing sections \\ \hline
- $T_{u,d}^{i}(N^i,N_u^i)$ & Transmission waiting time from UAV $i$ to UD  \\ \hline
+  $T_{u,d}^{i}(N^i,N_u^i)$ & Transmission waiting time from UAV $i$ to UD  \\ \hline
  \shortstack[l]{$T_{d,e}^{i}(N^i,N_u^i)$\\ ~} & \shortstack[l]{Transmission waiting time of UAV $i$'s data\\from UD to ES}  \\ \hline
  $T_e^{i}(N^i,N_u^i)$ & Processing waiting time at ES  \\ \hline
  \shortstack[l]{$\mu_{u,d}$\\ ~} & \shortstack[l]{Transmission speed from UAV $i$ to UD\\in no. of images per unit time} \\ \hline
@@ -370,7 +334,7 @@ By setting $N_{MIN}^i$ so, as long as ${N_u^i}$ is chosen so as to satisfy $0\le
 The solution for (\ref{eq1}) and (\ref{eq2}) is mentioned in detail in APPENDIX \ref{ape}.
 
 \subsection{Requirements of scheduling for multi-UAV search system} \label{feature}
-From a service-centric viewpoint, the scheduling of multi-UAV search systems should satisfy the four requirements described below.
+From a user-centric viewpoint, the scheduling of multi-UAV search systems should satisfy the four requirements described below.
 \begin{itemize}
 \item Robustness for the increase or decrease of number of UAVs: 
 The number of UAVs may increase due to adding the new UAVs to the existing UAV group or decrease due to the breakdown of the UAVs. 
@@ -382,28 +346,32 @@ There are individual differences in the flying speed and the processing speed of
 In our proposed scheduling method, such individual differences is considered in (\ref{eq_fin}).
 %
 \item Applicability for the various kinds of processing capacities of UAVs and ES: 
-The computing powers of each UAV and ES depend greatly on the machine performance. In the proposed method, it is possible to efficiently utilize the computing capacity of each UAV and ES, since $t_{fin}^i(N^i,N_u^i)$ in (\ref{eq_fin}) is defined considering the machine performance.
+The computational performance of each UAV and ES depends greatly on the machine capability. In the proposed method, it is possible to efficiently utilize the computing capacity of each UAV and ES, since $t_{fin}^i(N^i,N_u^i)$ in (\ref{eq_fin}) is defined considering the machine performance.
 %
 \item Feasibility for extension to various types of geographical areas: 
-There are many kinds of geographical areas in practical situations, such as a mountain slope where height must be considered.
-Our proposed scheduling method can be used by converting the three dimensional data of such area into the two-dimensional model, which will be described later.
+There are many kinds of geographical areas in practical situations.
+As we will discuss shortly in Section \ref{twodi}, by extending one-dimensional model as shown in Fig. \ref{model1.5}, our proposed scheduling method is applicable for two-dimensional models.
+It is obvious that the extension to three-dimensional models can be also considered though the detail is not presented in this paper.
+
+by converting the three dimensional data of such area into the two-dimensional model, which will be described later 
 \end{itemize}
 
-\section{Basic Performance evaluation}\label{eva}
+\section{Basic performance evaluation}\label{eva}
 This section shows that the proposed scheduling method maximizes the user's utility through the basic performance evaluation.
 \subsection{Simulation scenario}
 We considered a surveillance scenario in which a rescue team uses the multi-UAV system illustrated in Figure \ref{model} to find missing people in an area where humans and ground vehicles cannot easily step into.
 %
-Although our scheduling method should be applicable for realistic scenarios, we assume a simple model illustrated in Figure \ref{model1.5}, in which sensing sections are placed on the one-dimensional line and their sizes are identical, to present the problem formulation.
+We here assumed a simple model illustrated in Figure \ref{model1.5}, in which sensing sections are placed on the one-dimensional line and their sizes are identical, to present the problem formulation.
 %
 Our simulation adopted the proposed scheduling method described in Section \ref{math} and performed every step of the system flow described in Section \ref{flow}.
 %
 We compared the proposed method with one of the existing methods: fixed method, which simply assigns a fixed number of sensing sections to each UAV uniformly \cite{chang2016}.
 In the fixed method, $N_u^i$ is determined so that $t_{fin}^i$ is minimized.
 %
-In our basic evaluation, we adopts the following evaluation metric: the cumulative sum of $U_i$, defined by (\ref{ut}), against elapsed time.
-%ユーザはUAVの処理結果を取得するごとに効用が蓄積ができるものとし，その累積和を考える．
-It is assumed that the user gets $U_i$ at $t_{fin}^i$.
+In our basic evaluation, we assumed that the user cumulatively obtains $U_i$, which is defined by (\ref{ut}), every time UAV $i$ finishes its one round at $t_{fin}^i$.
+%
+Then, we observe how the cumulative summation of $U_i$ increases as the time elapses after the first UAV has started flying.
+%
 
 \subsection{Simulation parameters}
 
@@ -411,22 +379,18 @@ The parameters used in our simulation are listed in Table \ref{para_val}.
 %
 Considering the realistic specification of a recently commercialized UAV \cite{bebop2}, we set the flying speed of UAVs to 15 m/s.
 %
-%また図\ref{model1.5}におけるUAVの飛行開始位置から調査エリアの左端までの距離は災害発生地域や森林山岳地帯など人が立ち入れない地域での利用を想定し設定した．
 The size of images was set to 100 kbytes, which corresponds to the one in the dataset called PASCAL VOC 2007 used in \cite{Ren2015}.
 %
 The consumed times for processing one image at UAVs and the ES are set corresponding to the consumed time for object recognition using GPU and CPU reported in \cite{Ren2015}, respectively.
-As described in Section \ref{feature}, we need to consider the heterogeneity of UAVs from a service-centric viewpoint.
-Therefore, 各UAVの速度と単位時間あたりの画像処理枚数はそれぞれ平均値$\mu$の10\%を標準偏差$\sigma$とする正規分布から$\mu{\pm}2{\sigma}$の範囲でランダムに設定した．
+As described in Section \ref{feature}, we need to consider the heterogeneity of UAVs from a user-centric viewpoint.
+Therefore, the flying speed of and the number of images processed by UAVs were given by the normal distributions where the mean and the deviation were $\mu$ and $\sigma$. We set $\sigma$ = 0.1$\mu$ and the upper and lower limits to $\mu+2\sigma$ and $\mu-2\sigma$, respectively.
 %
 The transmission rates of communication channel from UAVs to the UD and from the UD to the ES are set 100 Mbps, which is similar to the effective throughput of IEEE802.11n \cite{Li2013}.
 %
 
 \subsection{Results}
-Figures \ref{utility} (a) and \ref{utility} (b) plots cumulative sum of utilities against elapsed time with $D$=200 and $D$=600, respectively.
+Figures \ref{utility} (a) and \ref{utility} (b) plots cumulative sum of utilities against elapsed time after start time with $D$=200 and $D$=600, respectively.
 We examined the fixed method with $N^i$ = 1, 10, 40, and 80.
-%いずれも時間の経過とともに単調増加しているが，提案方式は常に値が最大となっている．
-%Cumulative sum of utilities monotonically increases in all the methods
-%よってユーザが得られる効用の累積和の観点において固定方式よりも提案方式の方が優れていると言える．
 As we see in the figures, cumulative sum of utilities in all the methods keeps almost constant and then increase as time passes.
 Cumulative sum of utilities in the proposed method is the largest at any elapsed time, which suggests that the proposed method worked better than the fixed method in terms of cumulative sum of utilities.
 \begin{figure*}[t]
@@ -446,7 +410,7 @@ Cumulative sum of utilities in the proposed method is the largest at any elapsed
 Parameters & value \\ \hline
 No. of UAVs ($U$) & 5\\
 Average flying speed of UAVs & 15 m/s \\
-\shortstack[l]{Distance between initial position \\and left-end of sensing block ($D$)} & \shortstack[l]{200,600m\\~}  \\ 
+\shortstack[l]{Distance from initial position \\to left-end of sensing block ($D$)} & \shortstack[l]{200,600m\\~}  \\ 
 Size of each sensing section ($d$) & 5 m  \\ 
 Consumed time for acquiring one image & 2 s \\ 
 Transmission rate of communication channel & 100 Mbps \\ 
@@ -457,12 +421,13 @@ Size of image  &  100 kbytes \\
   \end{center}
 \end{table}
 
-\section{EVALUATION from a service-centric viewpoint}
-%Service centric なシステム設計における、QoS指標を用いた評価の必要性を論じる。
-In this section, we adopted the three evaluation metric to discuss our proposed scheduling method from a service-centric viewpoint.
+\section{EVALUATION FROM USER-CENTRIC VIEWPOINT}
+In this section, we adopted the three evaluation metric to discuss our proposed scheduling method from a user-centric viewpoint.
+
 \subsection{Extension to two-dimensional model}\label{twodi}
-Our proposed scheduling method described in Section \ref{math} was applied directly to the two-dimensional model.
-There are two assumptions in which the proposed scheduling method can be extended to the two-dimensional model shown in Figure \ref{twodimention} :
+Before introducing the evaluation metrics, we introduce the two-dimensional model we used for the evaluation.
+The following two assumptions make our proposed scheduling method described in Section \ref{math} easily applicable for two-dimensional models.
+\ref{twodimention} :
 
 \begin{description}
 
@@ -470,21 +435,23 @@ There are two assumptions in which the proposed scheduling method can be extende
 \item[(2)] Each UAV executes sensing on the zigzag in order from the area closest to the center like \cite{Maza2007}
 \end{description}
 
-As shown in Figure \ref{twodimention}, assuming that the vertical width of each partition is $d$ and the central angle of the sensing region is $\theta$ [rad], the distance between each section when UAV moves in the direction opposite to the center of the region is $d$ and the distance between each section when moving on the circumference is $\frac{1}{2}d\theta$.
-Therefore, setting $\theta=2$ [rad] so that all the distance between each section are equal as in Figure \ref{model1.5}, the proposed scheduling method described in Section \ref{math} was applied to the Figure \ref{twodimention}.
+In Figure \ref{twodimention}, the vertical width of each partition is $d$ and the central angle of the sensing region is $\theta$ [rad].
+Then, the distances between each neighboring section is $d$ for the direction opposite to the center of the region, while the ones between each neighboring section for the circumference is $\frac{1}{2}d\theta$.
+Therefore, when $\theta=2$ [rad], all the distances between each neighboring section become equal to $d$ as shown in Figure \ref{model1.5}.
+Then, since the two-dimensional model in Figure \ref{model1.5} can be dealt same as the one-dimensional model, the proposed scheduling method is easily applicable.
 
 \begin{figure}[t]
 \begin{center}
-\includegraphics[width= 7.5cm]{fig/twodim.png}
+\includegraphics[width= 7cm]{fig/twodim.png}
 \caption{Sensing region of two-dimensional model}
 \label{twodimention}
 \end{center}
 \end{figure}
 
-\subsection{Evaluation metric}\label{compare}
-We used the following three evaluation metrics from a service-centric viewpoint.
+\subsection{Evaluation metrics}\label{compare}
+We used the following three evaluation metrics from a user-centric viewpoint.
 
-\paragraph*{・Two types of elapsed times}
+\paragraph*{Two types of elapsed times}
 The first elapsed time is `elapsed time from start time' for each image, which is the elapsed time since the first UAV starts flying until the result about each image is obtained by the UD.
 %
 This metric is important for the rescue team because they need to know the information about each sensing section as soon as possible to know whether missing people are there or not.
@@ -493,23 +460,20 @@ The second one is `elapsed time after acquired' for each image, which is the ela
 %
 This metric is also valuable for the rescue team because it indicates the freshness of the information about each sensing section; the less updated information, the less reliable for them in searching missing people.
 
-\paragraph*{・ No. of images satisfying time requirement}
-The second metric is number of images satisfying time requirement: Number of images whose elapsed time after acquired is less than a predetermined value when elapsed time from start time is a certain value.
-%We also adopts time requirement combining the above two types of elapsed times: Number of images whose elapsed time after acquired is less than a predetermined value when elapsed time from start time is a certain value.
+\paragraph*{No. of images satisfying time requirement}
+The second metric is number of images satisfying time requirement: the number of images that satisfy shorter elapsed time after acquired than a predetermined threshold at a certain time.
 This metric is important for the rescue team because they need to get the fresh information while obtaining as many pieces of information as possible for a certain period.
 
-\paragraph*{・Value of information obtained by user}
-The third metric is cumulative sum of values of information obtained by the user at each time.
+\paragraph*{Information value obtained by user}
+The third metric is cumulative summation of information valueobtained by the user at each time.
 In \cite{NOMURA2001}, the value function of the obtained image $j$ at a elapsed time from start time $t$ was given as:
 \begin{align}
 V_j=2^{-\frac{t}{T_{half}}}, \label{eq_value}
 \end{align}
-where $T_{half}$ means the half-life of values, which is set considering the time it takes for the rescue team to be sent out in the various types of geographical areas. 
-%$T_{half}$は半減期を表す定数である．
-%式(\ref{eq_value})は，取得画像$j$の価値が画像が撮影された時刻に1を取り時間経過とともに指数減衰することを表す．
-%ユーザは取得結果$j$を受け取るごとに価値$V_j$を受け取ることができるものとし，その累積和を考える．
+where $T_{half}$ means the half-life of the value, which is a parameter set according to the time requirement in the disaster situation.
+%
 The user gets $V_j$ when obtaining the result from processed image $j$. 
-This metric is valuable for the rescue team because they need to get as many values of information as possible when they are sent out.
+This metric allows us to measure how much valuable information the user has obtained before the rescue team actually start their rescue. 
 
 \subsection{result}
 
@@ -524,7 +488,7 @@ This metric is valuable for the rescue team because they need to get as many val
 \begin{figure*}[t]
 \begin{center}
 \includegraphics[width=18.0cm]{fig/noimage.png}
-\caption{Number of images whose elapsed time after acquired is less than 120 [s]  at 600 [s]}
+\caption{No. of images that shorter elapsed time after acquired than 120 [s] at 600 [s] after start time}
 \label{totalnumber}
 \end{center}
 \end{figure*}
@@ -539,7 +503,7 @@ This metric is valuable for the rescue team because they need to get as many val
 
 Figure \ref{elapsed} (a) plots the elapsed time from the start time for acquired images against each area id.
 In Fig. \ref{elapsed} (a), as the area id increases, the elapsed time from start time monotonically increases in all the methods.
-In the fixed method, as the area id increased, $N^i$ when the elapsed time from the start time was the shortest at each area id was larger.
+In the fixed method, as the area id increased, $N^i$ giving the shortest elapsed time from the start time became larger for each area id.
 The proposed method worked between the fixed method with $N^i=10$ and $N^i=40$.
 %
 On the other hand, Figure \ref{elapsed} (b) plots the elapsed time after acquired for each image.
@@ -549,19 +513,14 @@ The proposed method worked between the fixed method with $N^i=10$ and $N^i=40$.
 %
 In the fixed method, $N^i=10$ and $N^i=40$ are reasonable; the elapsed times from start time of them were between the best and the third best, while their elapsed times after acquired were much shorter than that of $N^i=80$.
 %
-The proposed method worked between the fixed method with $N^i=10$ and $N^i=40$ in both types of elapsed times, which suggests that it enables us to automatically achieve the most reasonable $N^i$.
+The proposed method worked between the fixed method with $N^i=10$ and $N^i=40$ in both types of elapsed times, which suggests that it enables us to automatically achieve the reasonable $N^i$.
 
-Figures \ref{totalnumber} (a), \ref{totalnumber} (b), and \ref{totalnumber} (c) plot number of images whose elapsed time after acquired is less than 120 [s] at 600 [s] against the processing speed at ES in no. of images per unit time, the number of UAVs, and the distance between initial position and center of sensing block where area id is 1, respectively.
-また各値は三回のシミュレーションの平均値である．
-%図\ref{totalnumber}(a)上の破線は$P_e$が表\ref{para_val}に記した値の際の$\frac{P_e}{\overline{P_u}}$を表す．
-In the left side of Figure \ref{totalnumber} (a), the processing speed at ES is sufficiently lower than the average processing speed at UAVs, which corresponds to the case where processing is performed only at UAV without ES.
-In the right side of Figure \ref{totalnumber} (a), the average processing speed at UAV is sufficiently lower than the processing speed at ES, which corresponds to the case where processing is performed only at ES without UAV.
-%In Figure \ref{totalnumber} (a), in the proposed method, the number of images is continuously large irrespective of the the processing speed at ES: $N^i=40$の固定方式にのみ$\frac{P_e}{\overline{P_u}}$が$10^1$から$10^3$の範囲で劣っているが，$10^{-3}$から$10^{1}$の範囲では提案方式が最も優れている．
-%This indicates that the proposed method is applicable for the various kinds of processing capacities of UAVs and ES.
-%よってESの計算能力によらず安定して値が大きく，各UAVやESの計算能力を効率的に利用出来ているが確認できる．
-%同様に図\ref{totalnumber}(b)(c)においても提案方式は固定方式と比較すると$U$や$D$の値による変化が小さく，平均して高い値を取っている．
+Figures \ref{totalnumber} (a), \ref{totalnumber} (b), and \ref{totalnumber} (c) plot the numbers of images that satisfied shorter elapsed time after acquired than 120 [s] at 600 [s] against the processing speed at ES in no. of images per unit time, the number of UAVs, and the distance from the initial position to the closest sensing block (area id = 1), respectively.
+The plots are obtained by averaging the results obtained from three trials.
+In the left side of Figure \ref{totalnumber} (a), the processing speed at ES is sufficiently lower than the average processing speed at UAVs, which corresponds to the case where processing is performed mainly at UAV not so using ES.
+In the right side of Figure \ref{totalnumber} (a), the average processing speed at UAV is sufficiently lower than the processing speed at ES, which corresponds to the case where processing is performed mainly at ES not so using UAV.
 In Figures \ref{totalnumber} (a) and (b), the proposed method works at the sufficient level for different values of $\frac{P_e}{\overline{P_u}}$ and $U$, while different $N^i$ is the best for different parameters in the fixed method.
-In Figure \ref{totalnumber} (c), the proposed method keeps at the sufficient level for different values of $D$, while no. of images in the fixed method monotonically decreases, as $D$ is set larger.
+In Figure \ref{totalnumber} (c), the proposed method keep working at the sufficient level for different values of $D$, while no. of images in the fixed method monotonically decreases, as $D$ is set larger.
 
 Figure \ref{totalvalue} plots the cumulative sum of values against the elapsed time from start time.
 The half-life of Figure \ref{totalvalue}(a), \ref{totalvalue}(b), and \ref{totalvalue}(c) is 30, 60, and 120 [s], respectively.
@@ -572,31 +531,12 @@ From the result of Figure \ref{totalnumber} and Figure \ref{totalvalue}, since t
 
 
 \section{CONCLUSION}
-This paper proposed a scheduling method of multi-UAV search system that considers processing time of the acquired image data and data transfer time in areas where humans and ground vehicles cannot easily step into like disaster-damaged areas.
+This paper proposed a scheduling method of multi-UAV search system that, from a user-centric viewpoint, considers processing time of the acquired image data and data transfer time in areas where humans and ground vehicles cannot easily step into like disaster-damaged areas.
 In this paper, we first showed the system model, which consists of a user device, multiple UAVs, and an edge server, and mentioned the sytem flow. 
-We then presented the problem formulation of the proposed scheduling method that maximizes the user's utility, which is calculated from the efficiency of obtaining results from analyzed data and the interval of obtaining the results, by using the one-dimensional model where sensing sections are placed on the one-dimensional line and their sizes are identical.
-A simulation was performed to verify that the proposed method works well to ensure the freshness of individual obtained piece of information while delivering as many pieces of information as possible for a certain period.
-The results indicated that the proposed method works better than the conventional fixed methods, in terms of two metrics: i) elapsed time from start time and ii) elapsed time after acquired for each image.
-For a more practical evaluation, in our future work, we will include prototype implementation and experiment.
-
-%\bibitem{Pitre2012} R. R. Pitre, X. R. Li, R. Delbalzo, “UAV Route Planning for Joint
-%Search and Track Missions-An Information-Value Ap-proach”,  \emph{IEEE
-%Trans. Aerospace and Electronic Systems}, vol. 48, no.3, pp.2551 -2565, 2012
-
-% if have a single appendix:
-%\appendix[Proof of the Zonklar Equations]
-% or
-%\appendix  % for no appendix heading
-% do not use \section anymore after \appendix, only \section*
-% is possibly needed
-
-% use appendices with more than one appendix
-% then use \section to start each appendix
-% you must declare a \section before using any
-% \subsection or using \label (\appendices by itself
-% starts a section numbered zero.)
-%
-
+We then presented the utility-based problem formulation that ensures the freshness of individual obtained piece of information while obtaining as many pieces of information as possible for a certain period.
+The result of the basic performance evaluation was presented to verify that in terms of cumulative sum of utilities, the proposed method worked better than the existing methods: fixed method, which simply assigns a fixed number of sensing sections to each UAV uniformly.
+In addition, the simulation using the three evaluation metrics showed that the proposed method works at the sufficient level from a user-centric viewpoint.
+Future work includes the practical implementation.
 
 \appendices
 \section{Solution of the problem formulation}\label{ape}
@@ -668,37 +608,10 @@ In finding out the local optimal solution, $N_{l}^i$, the range of local searchi
 %
 In addition, we assumed that the consumed time for finding out the local optimal solution is negligible; since the complexity of the scheduling algorithm is quite simple, the calculation can be finished in advance while the UAV is flying in the previous round.
 
-
-
-
-% Can use something like this to put references on a page
-% by themselves when using endfloat and the captionsoff option.
 \ifCLASSOPTIONcaptionsoff
   \newpage
 \fi
 
-% trigger a \newpage just before the given reference
-% number - used to balance the columns on the last page
-% adjust value as needed - may need to be readjusted if
-% the document is modified later
-%\IEEEtriggeratref{8}
-% The "triggered" command can be changed if desired:
-%\IEEEtriggercmd{\enlargethispage{-5in}}
-
-% references section
-
-% can use a bibliography generated by BibTeX as a .bbl file
-% BibTeX documentation can be easily obtained at:
-% http://mirror.ctan.org/biblio/bibtex/contrib/doc/
-% The IEEEtran BibTeX style support page is at:
-% http://www.michaelshell.org/tex/ieeetran/bibtex/
-%\bibliographystyle{IEEEtran}
-% argument is your BibTeX string definitions and bibliography database(s)
-%\bibliography{IEEEabrv,../bib/paper}
-%
-% <OR> manually copy in the resultant .bbl file
-% set second argument of \begin to the number of references
-% (used to reserve space for the reference number labels box)
 \begin{thebibliography}{1}
 \bibitem{CRED2016}Debarati Guha-Sapir, Philippe Hoyois, Pasacline Wallemacq and Regina Below,``Annual Disaster Statistical Review 2016,"\emph{Centre for Research on
 the Epidemiology of Disasters},2016 
@@ -715,35 +628,154 @@ International Conference on Control \& Automation (ICCA)}, pp. 1345-1350, 2014
 \bibitem{chang2016} C. Zhao, M. Zhu and H. Liang, ``The Sustainable Tracking Strategy of Moving Target by Multi-UAVs in an Uncertain Environment, " \emph{2016 IEEE/CSAA International Conference on Aircraft Utility Systems (AUS)}, pp. 20-25, 2016
 \bibitem{Mirzaei2011} M. Mirzaei, F. Sharifi, B. W. Gordon, C. A. Rabbath and  Y. M.Zhang, ``Cooperative multi-vehicle search and coverage problem in uncertain environments, "\emph{in Proceedings of the 50th IEEE Conference on Decision and Control and European Control Conference (CDCECC)}, pp. 4140-4145, 2011
 %
+\bibitem{GCCE2018}  K. Miyano, R. Shinkuma, E. Oki, and T. Sato, ``Utility Based Scheduling for Multi-UAV Search System in Disaster Scenarios,'' Proc. IEEE 7th Global Conference on Consumer Electronics (GCCE), Aug 2018.
 \bibitem{Bamburry2015} D. Bamburry, ``Drones: Designed for product delivery," \emph{Design Management Review}, vol. 26, no. 1, pp. 40-48, 2015
 \bibitem{May2015}K. May,``Drones to deliver medicine and food? Drones for disaster relief? Why not?,"\url{https://ideas.ted.com/6-ways-drones-can-be-used-for-good/}, 2013
 \bibitem{Wada2015}A. Wada, T. Yamashita, M. Maruyama, T. Arai, H. Adachi and H. Tsuji, ``A surveillance system using small unmanned aerial vehicle (UAV) related technologies,''\emph{NEC Technical Journal},vol.8, no. 1, p68-72, 2015
-\bibitem{Bekmezci2013} I. Bekmezci, O. K. Sahingoz, and S. Temel, “Flying Ad-Hoc Networks (FANETs): a survey,” \emph{Ad Hoc Networks}, vol. 11, no. 3, pp. 1254-1270, 2013
+\bibitem{Bekmezci2013} I. Bekmezci, O. K. Sahingoz, and S. Temel, ``Flying Ad-Hoc Networks (FANETs): a survey,''\emph{Ad Hoc Networks}, vol. 11, no. 3, pp. 1254-1270, 2013
 \bibitem{Garcia2016} J S\'anchez-Garc\'ia, JM Garc\'ia-Campos, SL Toral, DG Reina and F Barrero, ``An intelligent strategy for tactical movements of UAVs in disaster scenarios,''\emph{
 International Journal of Distributed Sensor Networks}, vol.12, no. 3, 2016
-\bibitem{Hayat 2017}S. Hayat, E. Yanmaz, T. X. Brown, and C. Bettstetter,``Multi-Objective UAV Path Planning for Search and Rescue,” \emph{ICRA Singapore}, 2017 
-%
+\bibitem{Hayat 2017}S. Hayat, E. Yanmaz, T. X. Brown, and C. Bettstetter,``Multi-Objective UAV Path Planning for Search and Rescue,''\emph{ICRA Singapore}, 2017 
 %
 \bibitem{Ouahouah2017}S. Ouahouah , T. Taleb, J. Song and C. Benzaid, ``Efficient offloading mechanism for UAVs-based value added services," \emph{IEEE International Conference on Communications (ICC)}, 2017
-\bibitem{Valentino2018} R. Valentino, W.-S. Jung and Y.-B. Ko,``Opportunistic Computational Offloading System for Clusters of Drones,” \emph{International Conference on Advanced Communications Technology(ICACT)}, 2018 
-%\bibitem{Nigam2014} N. Nigam, ``The Multiple Unmanned Air Vehicle Persistent Surveillance Problem: A Review, \emph{Machines}, Vol.2, Issue 1, pp. 13-72, 2014
-%\bibitem{Loke2015} S. W. Loke, "The internet of flying-things: Opportunities and challenges with airborne fog computing and mobile cloud in the clouds, " \emph{arXiv preprint arXiv:1507.04492}, 2015
-%\bibitem{Jeong2016} S. Jeong, O. Simeone, and J. Kang, "Mobile edge computing via a UAVmounted cloudlet: Optimal bit allocation and path planning, "\emph{IEEE Transactions on Vehicular Technology,to appear}, 2017
-\bibitem{Motlagh2017}N. H. Motlagh, M. Bagaa, and T. Taleb, ``Uav-based iot platform: A crowd surveillance use case,\emph{IEEE Communications Magazine}, vol.55, no.2, pp. 128-134, 2017
-%\bibitem{Mohamed2017}M.-A. Messous, H. Sedjelmaci, N. Houari, S.-M. Senouci, ``Computation offloading game for an uav network in mobile edge computing,\emph{IEEE International Conference on Communications (ICC)}, pp. 1-6, 2017
+\bibitem{Valentino2018} R. Valentino, W.-S. Jung and Y.-B. Ko,``Opportunistic Computational Offloading System for Clusters of Drones,''\emph{International Conference on Advanced Communications Technology(ICACT)}, 2018 
+%
+\bibitem{Motlagh2017}N. H. Motlagh, M. Bagaa, and T. Taleb, ``Uav-based iot platform: A crowd surveillance use case,''\emph{IEEE Communications Magazine}, vol.55, no.2, pp. 128-134, 2017
+%
 \bibitem{Messous2017} M.-A. Messous1, A. Arfaoui, A. Alioua, S. -M. Senouci,``A Sequential Game Approach for Computation-Offloading in an UAV Network,''\emph{IEEE Global Communications Conference}, 2017 
 \bibitem{bebop2} Parrot SA, ``PARROT BEBOP2 SO LIGHT YOU CAN TAKE IT
 ANYWHERE TO FILM IN FULL HD, "
 \url{http://www.parrot.com/usa/products/bebop2/}, 2016
-%\bibitem{UPF614496} ``Lithium Ion UPF614496,'' Panasonic, \url{http://www.panamar.it/images/date_sheets_UPF-614496.pdf}, Jan.20, 2016
-
-%\bibitem{Traub2016} L.W. Traub,  ``Calculation of Constant Power Lithium Battery Discharge Curves,'' \emph{Batteries}, vol2, no2, 2016
+%
 \bibitem{Ren2015} S. Ren, K. He, R. Girshick, J. Sun, ``Faster R-CNN: Towards
 real-time object detection with region proposal networks,'' \emph{In Advances in neural information processing systems}, pp. 91-99, 2015
 \bibitem{Li2013} J. Li, Y. Fan, H. Chen, K. Xu, Y. Dai, F. Yin, Y. Ji,  ``Radio-over-fiber-based distributed antenna systems supporting IEEE 802.11 N/AC standards,'' \emph{Optical Communications and Networks (ICOCN), 2013 12th International Conference on. IEEE}, pp. 1-4, 2013
 \bibitem{NOMURA2001}K. NOMURA, K. YAMORI, E. TAKAHASHI, T. MIYOSHI, and Y. TANAKA, ``Waiting time versus utility to download images.,"  \emph{4th Asia Pacific-Symposium on Information and Telecommunication Technologies}, pp. 128-132, 2001 
 
 \end{thebibliography}
+
+
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{fig/sample.png}}]{Kosei Miyano} received the B.E. degree in Electrical
+and Electronic Engineering from Kyoto University,
+Kyoto, Japan, in 2017. He is currently a
+master course student of Communications and
+Computer Engineering, Graduate School of Informatics,
+Kyoto University. His research interest
+is adaptive operation for unmanned aerial vehicles.
+\end{IEEEbiography}
+
+
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{fig/sample.png}}]{Ryoichi Shinkuma} received the B.E., M.E., and
+Ph.D. degrees in Communications Engineering
+from Osaka University, Japan, in 2000, 2001, and
+2003, respectively. In 2003, he joined the faculty
+of Communications and Computer Engineering,
+Graduate School of Informatics, Kyoto University,
+Japan, where he is currently an Associate Professor. He was a Visiting Scholar at Wireless Information Network Laboratory (WINLAB), Rutgers,
+the State University of New Jersey, USA, from
+2008 Fall to 2009 Fall. His research interests include network design and
+control criteria, particularly inspired by economic and social aspects. He
+received the Young Researchers' Award from IEICE in 2006 and the Young
+Scientist Award from Ericsson Japan in 2007, respectively. He also received
+the TELECOM System Technology Award from the Telecommunications
+Advancement Foundation in 2016. He has been the chairperson of the
+Mobile Network and Applications (MoNA) Technical Committee of IEICE
+Communications Society since June 2017. He is a member of IEEE.
+\end{IEEEbiography}
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{fig/sample.png}}]{Narayan B. Mandayam} (S'89-M'94-SM'99-F'09) received the B.Tech (Hons.) degree in 1989
+from the Indian Institute of Technology, Kharagpur, and
+the M.S. and Ph.D. degrees in 1991 and 1994 from Rice
+University, all in electrical engineering. Since 1994 he has
+been at Rutgers University where he is currently a Distinguished
+Professor and Chair of the Electrical and Computer
+Engineering department. He also serves as Associate Director
+at WINLAB. He was a visiting faculty fellow in the Department
+of Electrical Engineering, Princeton University, in
+2002 and a visiting faculty at the Indian Institute of Science,
+Bangalore, India in 2003. Using constructs from game theory,
+communications and networking, his work has focused
+on system modeling, information processing and resource
+management for enabling cognitive wireless technologies to
+support various applications. He has been working recently
+on the use of prospect theory in understanding the psychophysics
+of pricing for wireless data networks as well as
+the smart grid. His recent interests also include privacy in
+IoT, resilient smart cities as well as modeling and analysis of
+trustworthy knowledge creation on the internet. Dr. Mandayam
+is a co-recipient of the 2015 IEEE Communications
+Society Advances in Communications Award for his seminal
+work on power control and pricing, the 2014 IEEE Donald
+G. Fink Award for his IEEE Proceedings paper titled
+``Frontiers of Wireless and Mobile Communications''and
+the 2009 Fred W. Ellersick Prize from the IEEE Communications
+Society for his work on dynamic spectrum access
+models and spectrum policy. He is also a recipient of the
+Peter D. Cherasia Faculty Scholar Award from Rutgers University
+(2010), the National Science Foundation CAREER
+Award (1998) and the Institute Silver Medal from the Indian
+Institute of Technology (1989). He is a coauthor of the
+books: Principles of Cognitive Radio (Cambridge University
+Press, 2012) and Wireless Networks: Multiuser Detection
+in Cross-Layer Design (Springer, 2004). He has served
+as an Editor for the journals IEEE Communication Letters
+and IEEE Transactions on Wireless Communications. He
+has also served as a guest editor of the IEEE JSAC Special
+Issues on Adaptive, Spectrum Agile and Cognitive Radio
+Networks (2007) and Game Theory in Communication Systems
+(2008). He is a Fellow and Distinguished Lecturer of
+the IEEE.
+\end{IEEEbiography}
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{fig/sample.png}}]{Takehiro Sato} received the B.E. and M.E. degrees from Keio
+University, Japan, in 2010 and 2011, respectively. He is currently
+working toward the Ph.D. degree at the Graduate School of Science
+and Technology, Keio University, Japan. His research interests include
+communication protocols and network architectures for the
+next-generation optical network. From 2011 to 2012, he was a research
+assistant in the Keio University Global COE Program,
+``High-Level Global Cooperation for Leading Edge Platform on
+Access Spaces,” by the Ministry of Education, Culture, Sports,
+Science, and Technology, Japan. He is currently a research fellow
+of the Japan Society for the Promotion of Science (since 2012). He is
+a student member of the IEEE and the IEICE.
+\end{IEEEbiography}
+
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{fig/sample.png}}]{Eiji Oki} (M'95\UTF{2013}SM'05\UTF{2013}F'13) received the B.E. and
+M.E. degrees in instrumentation engineering and the
+Ph.D. degree in electrical engineering from Keio
+University, Yokohama, Japan, in 1991, 1993, and
+1999, respectively. In 1993, he joined the Nippon
+Telegraph and Telephone Corporation (NTT) Communication
+Switching Laboratories, Tokyo, Japan,
+where he was involved in researching network
+design and control, traffic control methods, and highspeed
+switching systems. From 2000 to 2001, he
+was a Visiting Scholar with the Polytechnic Institute
+of New York University, Brooklyn, NY, USA, where he was involved in
+designing terabit switch/router systems. He was engaged in researching
+and developing high-speed optical IP backbone networks with the NTT
+Laboratories. He joined The University of Electro-Communications, Tokyo,
+in 2008, where he is currently a Professor. He has been active in the
+standardization of the path computation element and GMPLS in the IETF.
+He has authored over ten IETF RFCs. He has authored/coauthored four
+books, Broadband Packet Switching Technologies (Wiley, 2001), GMPLS
+Technologies (CRC Press, 2005), Advanced Internet Protocols, Services, and
+Applications (Wiley, 2012), and Linear Programming and Algorithms for
+Communication Networks, (CRC Press, 2012). He is a Fellow of the IEICE.
+He was a recipient of several prestigious awards, including the 1998 Switching
+System Research Award and the 1999 Excellent Paper Award presented by
+IEICE, the 2001 Asia-Pacific Outstanding Young Researcher Award presented
+by IEEE Communications Society for his contributions to broadband network,
+ATM, and optical IP technologies, the 2010 Telecom System Technology
+Prize by the Telecommunications Advanced Foundation, the IEEE HPSR 2012
+Outstanding Paper Award, the IEEE HPSR 2014 Best Paper Award Finalist,
+the First Runner Up, and the 2015 IEICE Achievement Award.
+\end{IEEEbiography}
+
 
 
 \EOD
